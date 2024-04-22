@@ -33,6 +33,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String textLabel1='De: ';
+  String textInput1='';
+  final TextEditingController _controller = TextEditingController();
 
   void _incrementCounter() {
     setState(() {
@@ -52,22 +55,27 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title,textAlign: TextAlign.center)
       ),
       
-      body: const Center(
-        child: Column(
-          children: [
-          Text('Para: '),
-          Text('DE: '),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Uff Praia Vermelha'
-          )
-          )
-        ],)
-
+      body: Center(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Column(
+              children: [ Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(textLabel1),
+                Expanded(child: 
+                TextField(decoration: InputDecoration(
+                    border: OutlineInputBorder(),hintText: 'aasdasdsa'),controller: _controller))
+                    ,
+                ElevatedButton(onPressed: (){print(_controller.text);}, child: Text('Ok'))
+              ],
+            ),
+            Text('bbb')])
+          ),)
           
-        
-      ),
+      ,
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
