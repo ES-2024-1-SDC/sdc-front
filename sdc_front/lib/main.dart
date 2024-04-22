@@ -34,8 +34,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String textLabel1='De: ';
-  String textInput1='';
-  final TextEditingController _controller = TextEditingController();
+  String textLabel2='Para: ';
+  String textInputDe='';
+  String textInputPara='';
+  final TextEditingController _controller1 = TextEditingController();
+  final TextEditingController _controller2 = TextEditingController();
 
   void _incrementCounter() {
     setState(() {
@@ -67,12 +70,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(textLabel1),
                 Expanded(child: 
                 TextField(decoration: InputDecoration(
-                    border: OutlineInputBorder(),hintText: 'aasdasdsa'),controller: _controller))
-                    ,
-                ElevatedButton(onPressed: (){print(_controller.text);}, child: Text('Ok'))
+                    border: OutlineInputBorder(),hintText: 'Meu Endereço Atual'),controller: _controller1)),
+                ElevatedButton(onPressed: gpsButton1, child: Text('gps'))
               ],
             ),
-            Text('bbb')])
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(textLabel2),
+                Expanded(child: 
+                TextField(decoration: InputDecoration(
+                    border: OutlineInputBorder(),hintText: 'Endereço de Destino'),controller: _controller2))
+                    ,
+                ElevatedButton(onPressed: (){okButton1();}, child: Text('Ok'))
+              ],
+            ),
+            Text('MAPA')])
           ),)
           
       ,
@@ -83,8 +97,22 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: BottomNavigationBar(items: const [
         BottomNavigationBarItem(label: 'Home',icon: Icon(Icons.home)),
-        BottomNavigationBarItem(label: 'Settings',icon: Icon(Icons.arrow_back))
+        BottomNavigationBarItem(label: 'Historico',icon: Icon(Icons.history))
       ]),
     );
   }
+
+void okButton1(){
+  textInputDe=_controller1.text;
+  textInputPara=_controller2.text;
+  _controller1.clear();_controller2.clear();
+  setState(() { });
+  print(textInputDe+textInputPara);
+  return;
+}
+void gpsButton1(){
+  return;
+}
+
+
 }
