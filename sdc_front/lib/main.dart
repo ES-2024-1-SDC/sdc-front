@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:expandable_menu/expandable_menu.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const CaronaUff());
@@ -42,14 +46,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-
       _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
 
@@ -59,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       
       body: Center(
-          child: SizedBox(
+          child: Container(
             width: double.infinity,
             height: double.infinity,
             child: Column(
@@ -71,8 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(child: 
                 TextField(decoration: InputDecoration(
                     border: OutlineInputBorder(),hintText: 'Meu Endereço Atual'),controller: _controller1)),
-                ElevatedButton(onPressed: gpsButton1, child: Text('gps'))
-              ],
+                SizedBox(width:80,height: 60,child: IconButton(icon: Icon(Icons.location_on_sharp),color: Colors.red,onPressed: gpsButton1))
+                ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -83,18 +86,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 TextField(decoration: InputDecoration(
                     border: OutlineInputBorder(),hintText: 'Endereço de Destino'),controller: _controller2))
                     ,
-                ElevatedButton(onPressed: (){okButton1();}, child: Text('Ok'))
+                SizedBox(
+                  width: 80,
+                  height: 60,
+                  child: ElevatedButton(onPressed: (){okButton1();}, child: Text('Ok'),
+                  style: ElevatedButton.styleFrom( foregroundColor: Colors.white,backgroundColor:Colors.green,shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0))),),
+                )
               ],
             ),
-            Text('MAPA')])
+            Text('MAPA'),
+            Expanded(
+            child: Image(image:AssetImage('../assets/mapa_uff.png'),fit: BoxFit.fill))
+              ]
+          )
           ),)
           
       ,
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+
       bottomNavigationBar: BottomNavigationBar(items: const [
         BottomNavigationBarItem(label: 'Home',icon: Icon(Icons.home)),
         BottomNavigationBarItem(label: 'Historico',icon: Icon(Icons.history))
