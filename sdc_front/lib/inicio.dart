@@ -61,7 +61,7 @@ class _InicioState extends State<Inicio> {
             ),
             Text('MAPA'),
             Expanded(
-            child: Image(image:AssetImage('../assets/mapa_uff.png'),fit: BoxFit.fill))
+            child: Image(image:AssetImage('assets/mapa_uff.png'),fit: BoxFit.fill))
               ]
           )
           ),)
