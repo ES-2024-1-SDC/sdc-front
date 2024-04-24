@@ -40,6 +40,7 @@ void initState() {
 Widget build(BuildContext context) {
 return Container(
   color:const Color.fromARGB(255, 100, 100, 100),
-  child:AnimatedOpacity(duration: Duration(milliseconds:5000),opacity: _alpha,onEnd: (){Navigator.push(context,MaterialPageRoute<void>(builder: (context)=>Inicio(title:'Caronas Uff')));},
+  // child:AnimatedOpacity(duration: Duration(milliseconds:5000),opacity: _alpha,onEnd: (){Navigator.push(context,MaterialPageRoute<void>(builder: (context)=>Inicio(title:'Caronas Uff')));},
+  child:AnimatedOpacity(duration: Duration(milliseconds:5000),opacity: _alpha,onEnd: (){Navigator.push(context,MaterialPageRoute<void>(builder: (context)=>Login()));},
 child: Image.asset('assets/car.png'),));
 }}
