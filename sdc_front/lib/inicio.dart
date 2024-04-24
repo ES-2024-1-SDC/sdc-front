@@ -1,45 +1,13 @@
-import 'dart:ui';
+import "package:flutter/material.dart";
 
-import 'package:flutter/material.dart';
-import 'package:expandable_menu/expandable_menu.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'uffcaronalib.dart';
-
-void main() {
-  runApp(const CaronaUff());
-}
-
-class CaronaUff extends StatelessWidget {
-  const CaronaUff({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Carona Uff',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 28, 184)),
-        useMaterial3: true,
-      ),
-      // home: const MyHomePage(title: 'Carona Uff'),
-      // home: const Inicio(title: 'Carona Uff'),
-      home: const Splash(),
-    );
-  }
-}
-/* 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
+class Inicio extends StatefulWidget {
+  const Inicio({super.key,required this.title});
   final String title;
-
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Inicio> createState() => _InicioState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _InicioState extends State<Inicio> {
   String textLabel1='De: ';
   String textLabel2='Para: ';
   String textInputDe='';
@@ -47,16 +15,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
 
@@ -106,11 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),)
           
       ,
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: BottomNavigationBar(items: const [
         BottomNavigationBarItem(label: 'Home',icon: Icon(Icons.home)),
         BottomNavigationBarItem(label: 'Historico',icon: Icon(Icons.history))
@@ -132,4 +88,3 @@ void gpsButton1(){
 
 
 }
- */
