@@ -5,3 +5,5 @@ export 'login.dart';
 export 'about.dart';
 export 'perfil.dart';
 export 'historico.dart';
+export 'pedir_carona.dart';
+export 'oferece_carona.dart';

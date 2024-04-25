@@ -19,12 +19,6 @@ class Historico extends StatelessWidget {
         Text('data : 25/04/2024 07:00'),
         Text('de: minha casa para: uff praia vermelha'),
       ]),
-      
-      
-      
-
-
-
 
       ]),
     ));
