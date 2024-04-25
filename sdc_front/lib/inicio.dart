@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'uffcaronalib.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key,required this.title});
@@ -23,7 +24,15 @@ class _InicioState extends State<Inicio> {
 
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text(widget.title,textAlign: TextAlign.center)
+        title: Text(widget.title,textAlign: TextAlign.center),
+        actions: [
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {
+                Navigator.push(context,MaterialPageRoute<void>(builder: (context)=>Perfil()));
+              }),
+        ]
+
       ),
       
       body: Center(
@@ -68,8 +77,10 @@ class _InicioState extends State<Inicio> {
           
       ,
       bottomNavigationBar: BottomNavigationBar(items: const [
-        BottomNavigationBarItem(label: 'Home',icon: Icon(Icons.home)),
-        BottomNavigationBarItem(label: 'Historico',icon: Icon(Icons.history))
+        BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
+        BottomNavigationBarItem(label: 'Pedir carona', icon: Icon(Icons.directions_car), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
+        BottomNavigationBarItem(label: 'Oferecer carona', icon: Icon(Icons.car_rental), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
+        BottomNavigationBarItem(label: 'Historico', icon: Icon(Icons.history), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0))
       ]),
     );
   }
