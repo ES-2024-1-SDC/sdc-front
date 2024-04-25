@@ -81,7 +81,9 @@ class _InicioState extends State<Inicio> {
         BottomNavigationBarItem(label: 'Pedir carona', icon: Icon(Icons.directions_car), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
         BottomNavigationBarItem(label: 'Oferecer carona', icon: Icon(Icons.car_rental), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
         BottomNavigationBarItem(label: 'Historico', icon: Icon(Icons.history), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0))
-      ]),
+      ],
+              showUnselectedLabels: true
+      ),
     );
   }
 
