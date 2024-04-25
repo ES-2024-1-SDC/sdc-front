@@ -76,16 +76,25 @@ class _InicioState extends State<Inicio> {
           ),)
           
       ,
-      bottomNavigationBar: BottomNavigationBar(items: const [
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (value){
+          if ((value)==3) Navigator.push(context,MaterialPageRoute<void>(builder: (context)=>Historico()));
+        },
+        
+        
+        
+        items: const [
         BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
         BottomNavigationBarItem(label: 'Pedir carona', icon: Icon(Icons.directions_car), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
         BottomNavigationBarItem(label: 'Oferecer carona', icon: Icon(Icons.car_rental), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
-        BottomNavigationBarItem(label: 'Historico', icon: Icon(Icons.history), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0))
+        BottomNavigationBarItem(label: 'Historico', icon: Icon(Icons.history), backgroundColor: Color.fromRGBO(0, 0, 155, 1.0),)
       ],
               showUnselectedLabels: true
       ),
     );
   }
+
+
 
 void okButton1(){
   textInputDe=_controller1.text;
