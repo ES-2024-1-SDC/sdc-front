@@ -65,7 +65,7 @@ class OfereceCarona extends StatelessWidget {
                       // Aqui você pode adicionar mais informações da carona se necessário
                       trailing: ElevatedButton(
                         onPressed: () {
-                          // Aqui você pode adicionar a lógica para oferecer a carona
+                          // Lógica para oferecer a carona
                         },
                         child: Text('Oferecer'),
                       ),
