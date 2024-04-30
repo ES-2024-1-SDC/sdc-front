@@ -1,9 +1,9 @@
 library uffcaronalib;
-export 'inicio.dart';
-export 'splash.dart';
-export 'login.dart';
+export 'pages/inicio.dart';
+export 'pages/splash.dart';
+export 'pages/login.dart';
 export 'about.dart';
-export 'perfil.dart';
-export 'historico.dart';
-export 'pedir_carona.dart';
-export 'oferece_carona.dart';
+export 'pages/perfil.dart';
+export 'pages/historico.dart';
+export 'pages/pedir_carona.dart';
+export 'pages/oferece_carona.dart';
