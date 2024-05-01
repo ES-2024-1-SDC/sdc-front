@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import "package:flutter/material.dart";
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../uffcaronalib.dart';
 
 class Inicio extends StatefulWidget {
@@ -23,6 +26,12 @@ class _InicioState extends State<Inicio> {
   String textInputPara = '';
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
+  late GoogleMapController mapController;
+  final LatLng _selectedLocation = const LatLng(-22.904585778723078, -43.13149503863926);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +49,10 @@ class _InicioState extends State<Inicio> {
           ]),
       body: Center(
         child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: Column(children: [
+          width: double.infinity,
+          height: double.infinity,
+          child: Column(
+            children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,17 +101,26 @@ class _InicioState extends State<Inicio> {
                   )
                 ],
               ),
-              Text('MAPA'),
+              Text('Mapa'),
               Expanded(
-                  child: Image(
-                      image: AssetImage('assets/mapa_uff.png'),
-                      fit: BoxFit.fill))
-            ])),
+                child: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _selectedLocation,
+                    zoom: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (value) {
-              Navigator.push(context,
-                  MaterialPageRoute<void>(builder: (context) => _listaPaginas[value]));
+            Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (context) => _listaPaginas[value]));
           },
           items: const [
             BottomNavigationBarItem(
