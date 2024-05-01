@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'uffcaronalib.dart';
+import '../uffcaronalib.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});

@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'uffcaronalib.dart';
+import '../uffcaronalib.dart';
 
 class Historico extends StatelessWidget {
   const Historico({super.key});
