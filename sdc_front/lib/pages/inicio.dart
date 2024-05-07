@@ -5,6 +5,7 @@ import "package:flutter/material.dart";
 // import 'package:google_maps/google_maps_drawing.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../uffcaronalib.dart';
+import 'package:location/location.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key, required this.title});
@@ -28,11 +29,11 @@ class _InicioState extends State<Inicio> {
   final TextEditingController _controller2 = TextEditingController();
   late GoogleMapController mapController;
   LatLng _selectedLocation = LatLng(-22.904585778723078, -43.13149503863926);
-  LatLng deLocation = LatLng(-22.904585778723078, -43.13149503863926);
-  LatLng paraLocation = LatLng(-22.902397827002222, -43.172449059784405);
+  LatLng deLocation = LatLng(-22.902397827002222, -43.172449059784405);
+  LatLng paraLocation = LatLng(-22.904585778723078, -43.13149503863926);
   late Marker markerA;
   late Marker markerB;
-  bool isMarkerVisible = false;
+  bool isMarkerVisible = true;
   late GoogleMap gMapWidget;
   String strOrigem='Origem';
   String strDestino='Destino';
@@ -167,18 +168,26 @@ class _InicioState extends State<Inicio> {
     return;
   }
 
-  void gpsButton1() {
+  void gpsButton1() async {
     // 060524 - TODO SELECTEDLOCATION DEVE RECEBER A LOCALIZAÇÃO ATUAL DO USUARIO
     // PROVAVELMENTE SERA NECESSARIO MUDANCAS NO PERMISSIOHANDLER PARA CONSEGUIR
     // PERMISSOES DE LOCALIZACAO ATUAL QUE TAMBEM DEVEM SER ADICIONADAS NO INICIO
     // DO CREATESTATE
-    _selectedLocation=LatLng(-22.902397827002222, -43.172449059784405);
+    // 070524 - FEITO. O APP CONSEGUE MUDAR A LOCALIZACAO ATUAL DO USUARIO
+    // ATRAVES DO BOTAO GPSBUTTON1
+    // OBS: APENAS A LOCALIZACAO DURANTE O USO DO APP FOI REQUERIDA,
+    // NÃO SENDO NECESSARIO A LOCALIZACAO EM BACKGROUND
+    // _selectedLocation=LatLng(-22.902397827002222, -43.172449059784405);
+    _selectedLocation= await _getLocation();
+    if (_selectedLocation!=null)
+      deLocation=_selectedLocation;
+    print(_selectedLocation);
     refreshMap();
     // return;
   }
 
   void refreshMap() async {
-    isMarkerVisible=!isMarkerVisible;
+    // isMarkerVisible=!isMarkerVisible;
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: _selectedLocation
       ,zoom: await mapController.getZoomLevel() )));
     setState(() {});
@@ -202,4 +211,28 @@ class _InicioState extends State<Inicio> {
           visible: isMarkerVisible,
         );
   }
+
+    Future _getLocation() async {
+      Location location = new Location();
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+     LocationData _locationData;
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return null;
+        }
+      }
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return null;
+        }
+      }
+      _locationData = await location.getLocation();
+      return LatLng(_locationData.latitude!,_locationData.longitude!);
+      }
+
 }
