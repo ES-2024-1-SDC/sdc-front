@@ -46,7 +46,7 @@ class _LoginState extends State<Login> {
     ), ),
             child: ListView(
               children: [ 
-                Image.asset('caronaUffLogo.png',alignment: AlignmentDirectional.topCenter,)
+                Image.asset('assets/caronaUffLogo.png',alignment: AlignmentDirectional.topCenter,)
                 ,Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                     children: [
