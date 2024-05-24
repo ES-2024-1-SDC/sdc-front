@@ -30,6 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  flutter_secure_storage: ^8.0.0
+    #bcrypt: ^4.0.0
+    #jaguar_jwt: ^3.0.0
+    #encrypt: ^5.0.0
+
+
     
   expandable_menu: ^0.0.5
   google_maps_flutter: ^2.6.1
@@ -40,6 +47,8 @@ dependencies:
   cupertino_icons: ^1.0.6
   google_maps_flutter_web: ^0.5.7
   google_maps: ^7.1.0
+  http: ^1.2.1
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
