@@ -29,7 +29,6 @@ class _LoginState extends State<Login> {
   final _storage = FlutterSecureStorage();
 
   Future<void> _login() async {
-
     // Lógica da autenticação com o servidor usando http e obter o token de autenticação
 
     await _storage.write(key: 'auth_token', value: sessionToken);
@@ -155,7 +154,13 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 20),
                 TextButton(
                   child: Text('Cadastrar'),
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return RegistrationDialog();
+                        });
+                  },
                 )
               ],
             ),
@@ -171,5 +176,91 @@ class _LoginState extends State<Login> {
         context,
         MaterialPageRoute<void>(
             builder: (context) => Inicio(title: 'Caronas Uff')));
+  }
+}
+
+class RegistrationDialog extends StatefulWidget {
+  @override
+  _RegistrationDialogState createState() => _RegistrationDialogState();
+}
+
+class _RegistrationDialogState extends State<RegistrationDialog> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Register'),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+              ),
+            ),
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+              ),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+              ),
+              obscureText: true,
+            ),
+            TextField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+              ),
+              obscureText: true,
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        ElevatedButton(
+          child: Text('Register'),
+          onPressed: () {
+            String email = _emailController.text;
+            String username = _usernameController.text;
+            String password = _passwordController.text;
+            String confirmPassword = _confirmPasswordController.text;
+
+            if (password == confirmPassword) {
+              // Implementar lógica de registro aqui
+              print('Email: $email');
+              print('Username: $username');
+              print('Password: $password');
+
+              Navigator.of(context).pop();
+            } else {
+              // Mostrar erro de confirmação de senha
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Passwords do not match'),
+                ),
+              );
+            }
+          },
+        ),
+      ],
+    );
   }
 }
