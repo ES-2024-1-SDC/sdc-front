@@ -191,6 +191,13 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  bool isEmailValid(String email) {
+    String pattern =
+        r'^[a-zA-Z0-9.a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -199,8 +206,15 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TextField(
+            TextFormField(
               controller: _emailController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, insira um email.';
+                } else if (!isEmailValid(value)) {
+                  return 'Por favor, insira um email válido';
+                }
+              },
               decoration: InputDecoration(
                 labelText: 'Email',
               ),
