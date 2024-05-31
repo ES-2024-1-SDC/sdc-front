@@ -4,7 +4,8 @@ import 'package:mockito/mockito.dart';
 import '../../lib/pages/login.dart';
 import '../../lib/pages/inicio.dart';
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {
+class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+
   void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -26,11 +27,11 @@ class MockNavigatorObserver extends Mock implements NavigatorObserver {
       testWidgets('deve mostrar mensagem de erro se username está vazio',
           (WidgetTester tester) async {
         await pumpLoginScreen(tester);
-        await tester.enterText(find.byType(TextFormField).at(0), 'user123');
+        await tester.enterText(find.byType(TextFormField).at(1), 'password123');
         await tester.tap(find.text('Login'));
         await tester.pump();
-        expect(find.text('Por favor, insira uma senha.'), findsOneWidget);
+        expect(find.text('Por favor, insira um nome de usuário.'), findsOneWidget);
       });
     });
   }
-}
+
