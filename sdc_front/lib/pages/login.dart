@@ -190,12 +190,36 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  String _emailValidationMessage = '';
 
   bool isEmailValid(String email) {
     String pattern =
         r'^[a-zA-Z0-9.a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
     RegExp regex = RegExp(pattern);
     return regex.hasMatch(email);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_validateEmail);
+  }
+
+  @override
+  void dispose() {
+    _emailController.removeListener(_validateEmail);
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _validateEmail() {
+    setState(() {
+      if (isEmailValid(_emailController.text)) {
+        _emailValidationMessage = 'Email válido!';
+      } else {
+        _emailValidationMessage = 'Email inválido';
+      }
+    });
   }
 
   @override
@@ -208,17 +232,16 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
           children: <Widget>[
             TextFormField(
               controller: _emailController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, insira um email.';
-                } else if (!isEmailValid(value)) {
-                  return 'Por favor, insira um email válido';
-                }
-              },
               decoration: InputDecoration(
                 labelText: 'Email',
               ),
             ),
+            Text(_emailValidationMessage,
+                style: TextStyle(
+                  color: isEmailValid(_emailController.text)
+                      ? Colors.green
+                      : Colors.red,
+                )),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
