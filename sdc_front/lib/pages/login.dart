@@ -301,3 +301,4 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
     );
   }
 }
+
