@@ -4,9 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Perfil extends StatelessWidget {
   Perfil({super.key});
 
-  Future<String> _getUserName() async {
+  Future<Map<String, dynamic>> _getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('user_username') ?? '';
+    String userName = prefs.getString('user_username') ?? '';
+    double avaliacoes = 4.9; // Substitua por sua lógica para obter as avaliações
+    return {'userName': userName, 'avaliacoes': avaliacoes};
   }
 
   @override
@@ -16,9 +18,9 @@ class Perfil extends StatelessWidget {
         title: Text('Perfil'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: FutureBuilder<String>(
-        future: _getUserName(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _getInfo(),
+        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -26,6 +28,8 @@ class Perfil extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('Nenhum dado encontrado'));
           } else {
+            final userName = snapshot.data!['userName'] as String;
+            final avaliacoes = snapshot.data!['avaliacoes'] as double;
             return Container(
               alignment: Alignment.center,
               child: Column(
@@ -35,14 +39,14 @@ class Perfil extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Nome de Usuario: '),
-                      Text(snapshot.data!),
+                      Text(userName),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Avaliações: '),
-                      Text('4.98 (900)'),
+                      Text('$avaliacoes (900)'),
                     ],
                   ),
                 ],
