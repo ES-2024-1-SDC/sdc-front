@@ -131,24 +131,6 @@ class _LoginState extends State<Login> {
                     SizedBox(
                       height: 20,
                     ),
-                    Container(
-                        height: 60,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Login com Google'),
-                              Icon(Icons.g_mobiledata)
-                            ],
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.indigo.shade400,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(0.0))),
-                        ))
                   ],
                 ),
                 SizedBox(height: 20),
