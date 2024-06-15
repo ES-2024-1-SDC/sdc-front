@@ -7,7 +7,8 @@ class Perfil extends StatelessWidget {
   Future<Map<String, dynamic>> _getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userName = prefs.getString('user_username') ?? '';
-    double avaliacoes = 4.9; // Substitua por sua lógica para obter as avaliações
+    double avaliacoes =
+        4.9; // Substitua por sua lógica para obter as avaliações
     return {'userName': userName, 'avaliacoes': avaliacoes};
   }
 
@@ -16,11 +17,12 @@ class Perfil extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Perfil'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.indigo, // Cor de fundo da AppBar similar à Uber
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _getInfo(),
-        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -38,15 +40,38 @@ class Perfil extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Nome de Usuario: '),
-                      Text(userName),
+                      Text(
+                        'Nome de Usuário: ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        userName,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
                     ],
                   ),
+                  SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Avaliações: '),
-                      Text('$avaliacoes (900)'),
+                      Text(
+                        'Avaliações: ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        '$avaliacoes (900)',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -58,4 +83,3 @@ class Perfil extends StatelessWidget {
     );
   }
 }
-

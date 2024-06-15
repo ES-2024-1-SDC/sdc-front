@@ -12,6 +12,7 @@ class CaronaUff extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Carona Uff',
       theme: ThemeData(
         colorScheme:

@@ -19,7 +19,7 @@ class _PedirCaronaState extends State<PedirCarona> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedir carona'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.indigo, // Cor de fundo da AppBar similar à Uber
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -30,6 +30,7 @@ class _PedirCaronaState extends State<PedirCarona> {
               controller: _origemController,
               decoration: InputDecoration(
                 labelText: 'Origem',
+                border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 20),
@@ -37,6 +38,7 @@ class _PedirCaronaState extends State<PedirCarona> {
               controller: _destinoController,
               decoration: InputDecoration(
                 labelText: 'Destino',
+                border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 20),
@@ -44,6 +46,7 @@ class _PedirCaronaState extends State<PedirCarona> {
               controller: _dataController,
               decoration: InputDecoration(
                 labelText: 'Data',
+                border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 20),
@@ -51,14 +54,18 @@ class _PedirCaronaState extends State<PedirCarona> {
               controller: _horaController,
               decoration: InputDecoration(
                 labelText: 'Hora',
+                border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                //Lógica para salvar os dados
+                // Lógica para salvar os dados
               },
-              child: Text('Pedir carona'),
+              child: Text('Pedir carona', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo, // Cor do botão similar à Uber
+              ),
             ),
           ],
         ),

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../uffcaronalib.dart';
 
@@ -19,7 +20,7 @@ class Carona {
 class OfereceCarona extends StatelessWidget {
   const OfereceCarona({Key? key}) : super(key: key);
 
-  // Função que vai chmar o controller para pegar as caronas disponíveis
+  // Função que vai chamar o controller para pegar as caronas disponíveis
   void getCaronas(){
 
   }
@@ -40,7 +41,7 @@ class OfereceCarona extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Oferecer carona'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.indigo, // Cor de fundo similar à Uber
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -58,16 +59,25 @@ class OfereceCarona extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Carona carona = caronasPedidas[index];
                   return Card(
+                    elevation: 3,
                     child: ListTile(
                       title: Text('Origem: ${carona.origem}'),
                       subtitle: Text(
-                          'Destino: ${carona.destino}\nData: ${carona.data}\nHora: ${carona.hora}'),
+                        'Destino: ${carona.destino}\nData: ${carona.data}\nHora: ${carona.hora}',
+                      ),
                       // Aqui você pode adicionar mais informações da carona se necessário
                       trailing: ElevatedButton(
                         onPressed: () {
                           // Lógica para oferecer a carona
                         },
-                        child: Text('Oferecer'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigo, // Cor do botão similar à Uber
+                          
+                        ),
+                        child: Text(
+                          'Oferecer',
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
                       ),
                     ),
                   );
@@ -80,4 +90,3 @@ class OfereceCarona extends StatelessWidget {
     );
   }
 }
-

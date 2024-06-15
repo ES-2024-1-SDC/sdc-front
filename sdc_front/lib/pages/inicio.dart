@@ -1,13 +1,14 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../uffcaronalib.dart';
 import 'package:location/location.dart';
+import '../uffcaronalib.dart';
 
 class Inicio extends StatefulWidget {
-  const Inicio({super.key, required this.title});
+  const Inicio({Key? key, required this.title}) : super(key: key);
   final String title;
+
   @override
-  State<Inicio> createState() => _InicioState();
+  _InicioState createState() => _InicioState();
 }
 
 class _InicioState extends State<Inicio> {
@@ -19,10 +20,6 @@ class _InicioState extends State<Inicio> {
     Historico()
   ];
 
-  String textLabel1 = 'De: ';
-  String textLabel2 = 'Para: ';
-  final TextEditingController _controller1 = TextEditingController();
-  final TextEditingController _controller2 = TextEditingController();
   late GoogleMapController mapController;
   LatLng _selectedLocation = LatLng(-22.904585778723078, -43.13149503863926);
   LatLng deLocation = LatLng(-22.902397827002222, -43.172449059784405);
@@ -30,9 +27,14 @@ class _InicioState extends State<Inicio> {
   late Marker markerA;
   late Marker markerB;
   bool isMarkerVisible = true;
-  late GoogleMap gMapWidget;
   String strOrigem = 'Origem';
   String strDestino = 'Destino';
+
+  @override
+  void initState() {
+    super.initState();
+    updateMarkers();
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -40,157 +42,159 @@ class _InicioState extends State<Inicio> {
 
   @override
   Widget build(BuildContext context) {
-    updateMarkers();
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title, textAlign: TextAlign.center),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.person),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute<void>(builder: (context) => Perfil()));
-                }),
-          ]),
-      body: Center(
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(textLabel1),
-                  Expanded(
-                      child: TextField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Meu Endereço Atual'),
-                          controller: _controller1)),
-                  SizedBox(
-                      width: 80,
-                      height: 60,
-                      child: IconButton(
-                          icon: Icon(Icons.location_on_sharp),
-                          color: Colors.red,
-                          onPressed: gpsButton1))
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(textLabel2),
-                  Expanded(
-                      child: TextField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Endereço de Destino'),
-                          controller: _controller2)),
-                  SizedBox(
-                    width: 80,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        okButton1();
-                      },
-                      child: Text('Ok'),
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0.0))),
-                    ),
-                  )
-                ],
-              ),
-              Text('Mapa'),
-              Expanded(
-                child: gMapWidget = GoogleMap(
+        backgroundColor: Colors.white,
+        title: Text(
+          widget.title,
+          style: TextStyle(color: Colors.black87),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person, color: Colors.black87),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Perfil()));
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                GoogleMap(
                   onMapCreated: _onMapCreated,
-                  onTap: _onMapTap,
                   initialCameraPosition: CameraPosition(
                     target: _selectedLocation,
                     zoom: 15,
                   ),
                   markers: Set.of([markerA, markerB]),
                 ),
-              ),
-            ],
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  right: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Meu Endereço Atual',
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey.shade200,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                ),
+                                onChanged: (value) {
+                                  // Atualizar localização atual conforme o usuário digita
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            IconButton(
+                              icon: Icon(Icons.location_on, color: Colors.red),
+                              onPressed: () {
+                                // Implementar ação de obter localização atual
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Container(
+                        color: Colors.white,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Endereço de Destino',
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey.shade200,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                ),
+                                onChanged: (value) {
+                                  // Atualizar endereço de destino conforme o usuário digita
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Ação do botão 'Ok'
+                                okButton1();
+                              },
+                              child: Text('Ok'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: (value) {
-            Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                    builder: (context) => _listaPaginas[value]));
-          },
-          items: const [
-            BottomNavigationBarItem(
-                label: 'Home',
-                icon: Icon(Icons.home),
-                backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
-            BottomNavigationBarItem(
-                label: 'Pedir carona',
-                icon: Icon(Icons.directions_car),
-                backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
-            BottomNavigationBarItem(
-                label: 'Oferecer carona',
-                icon: Icon(Icons.car_rental),
-                backgroundColor: Color.fromRGBO(0, 0, 155, 1.0)),
-            BottomNavigationBarItem(
-              label: 'Historico',
-              icon: Icon(Icons.history),
-              backgroundColor: Color.fromRGBO(0, 0, 155, 1.0),
-            )
-          ],
-          showUnselectedLabels: true),
+        onTap: (value) {
+          Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                  builder: (context) => _listaPaginas[value]));
+        },
+        items: const [
+          BottomNavigationBarItem(
+            label: 'Home',
+            icon: Icon(Icons.home, color: Colors.black87),
+          ),
+          BottomNavigationBarItem(
+            label: 'Pedir carona',
+            icon: Icon(Icons.directions_car, color: Colors.black87),
+          ),
+          BottomNavigationBarItem(
+            label: 'Oferecer carona',
+            icon: Icon(Icons.car_rental, color: Colors.black87),
+          ),
+          BottomNavigationBarItem(
+            label: 'Histórico',
+            icon: Icon(Icons.history, color: Colors.black87),
+          ),
+        ],
+        showUnselectedLabels: true,
+        selectedItemColor: Colors.indigo,
+        unselectedItemColor: Colors.grey, // Cor dos itens não selecionados
+      ),
     );
   }
 
   void okButton1() {
-    strOrigem = _controller1.text;
-    strDestino = _controller2.text;
-    print(strOrigem);
+    // Lógica para processar o clique no botão 'Ok'
+    strOrigem = ''; // Atualizar com o valor do campo de origem
+    strDestino = ''; // Atualizar com o valor do campo de destino
     updateMarkers();
-    // _controller1.clear();
-    // _controller2.clear();
     setState(() {});
-    print(strOrigem + strDestino);
-    return;
-  }
-
-  void gpsButton1() async {
-    // 060524 - TODO SELECTEDLOCATION DEVE RECEBER A LOCALIZAÇÃO ATUAL DO USUARIO
-    // PROVAVELMENTE SERA NECESSARIO MUDANCAS NO PERMISSIOHANDLER PARA CONSEGUIR
-    // PERMISSOES DE LOCALIZACAO ATUAL QUE TAMBEM DEVEM SER ADICIONADAS NO INICIO
-    // DO CREATESTATE
-    // 070524 - FEITO. O APP CONSEGUE MUDAR A LOCALIZACAO ATUAL DO USUARIO
-    // ATRAVES DO BOTAO GPSBUTTON1
-    // OBS: APENAS A LOCALIZACAO DURANTE O USO DO APP FOI REQUERIDA,
-    // NÃO SENDO NECESSARIO A LOCALIZACAO EM BACKGROUND
-    // _selectedLocation=LatLng(-22.902397827002222, -43.172449059784405);
-    _selectedLocation = await _getLocation();
-    if (_selectedLocation != null) deLocation = _selectedLocation;
-    print(_selectedLocation);
-    refreshMap();
-    // return;
-  }
-
-  void refreshMap() async {
-    // isMarkerVisible=!isMarkerVisible;
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: _selectedLocation, zoom: await mapController.getZoomLevel())));
-    setState(() {});
-  }
-
-  void _onMapTap(LatLng l) {
-    print(l);
   }
 
   void updateMarkers() {
@@ -207,28 +211,5 @@ class _InicioState extends State<Inicio> {
       infoWindow: InfoWindow(title: strDestino),
       visible: isMarkerVisible,
     );
-  }
-
-  Future _getLocation() async {
-    Location location = new Location();
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return null;
-      }
-    }
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return null;
-      }
-    }
-    _locationData = await location.getLocation();
-    return LatLng(_locationData.latitude!, _locationData.longitude!);
   }
 }

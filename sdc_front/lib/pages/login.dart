@@ -32,13 +32,14 @@ class _LoginState extends State<Login> {
     await _storage.write(key: 'auth_token', value: sessionToken);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //prefs.setString("usuario", _username!);
     await prefs.setString('user_username', _username!);
 
     Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-            builder: (context) => Inicio(title: 'Caronas Uff')));
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => Inicio(title: 'Caronas Uff'),
+      ),
+    );
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -49,7 +50,7 @@ class _LoginState extends State<Login> {
       case LoginStatus.notSignIn:
         return Scaffold(
           body: Container(
-            padding: EdgeInsets.only(left: 40, right: 40, top: 40),
+            padding: EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.white, Colors.indigo.shade50],
@@ -57,93 +58,88 @@ class _LoginState extends State<Login> {
             ),
             child: ListView(
               children: [
+                SizedBox(height: 80),
                 Image.asset(
                   'assets/caronaUffLogo.png',
                   alignment: AlignmentDirectional.topCenter,
+                  height: 120,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            Row(children: [
-                              Icon(Icons.account_circle_outlined),
-                              Text('Nome de Usuário')
-                            ]),
-                            Padding(
-                                padding: EdgeInsets.all(5),
-                                child: TextFormField(
-                                  onSaved: ((newValue) => _username = newValue),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Por favor, insira um nome de usuário.';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: "Username",
-                                    border: OutlineInputBorder(),
-                                  ),
-                                )),
-                            Row(children: [
-                              Icon(Icons.lock_outline),
-                              Text('Senha')
-                            ]),
-                            Padding(
-                              padding: EdgeInsets.all(5),
-                              child: TextFormField(
-                                obscureText: true,
-                                onSaved: (newValue) => _password = newValue,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Por favor, insira uma senha.';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Password",
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            )
-                          ],
-                        )),
-                    Container(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                            onPressed: () {},
-                            child: Text('Esqueceu sua Senha?'))),
-                    Container(
-                      height: 60,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _submit,
-                        child: Text("Login"),
-                        style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
+                SizedBox(height: 40),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        onSaved: (newValue) => _username = newValue,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira um nome de usuário.';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.account_circle_outlined),
+                          labelText: "Username",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        obscureText: true,
+                        onSaved: (newValue) => _password = newValue,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira uma senha.';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock_outline),
+                          labelText: "Password",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        height: 48,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _submit,
+                          child: Text("Login", style: TextStyle(color: Colors.white),),
+                          style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.indigo.shade400,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0.0))),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
+                      SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Esqueceu sua Senha?',
+                          style: TextStyle(color: Colors.indigo),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 16),
                 TextButton(
-                  child: Text('Cadastrar'),
                   onPressed: () {
                     showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return RegistrationDialog();
-                        });
+                      context: context,
+                      builder: (BuildContext context) {
+                        return RegistrationDialog();
+                      },
+                    );
                   },
-                )
+                  child: Text(
+                    'Cadastrar',
+                    style: TextStyle(color: Colors.indigo),
+                  ),
+                ),
               ],
             ),
           ),
