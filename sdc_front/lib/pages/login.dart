@@ -25,12 +25,14 @@ class _LoginState extends State<Login> {
 
   final _storage = FlutterSecureStorage();
 
-  Future<void> _login() async {
+  Future _login() async {
     // Lógica da autenticação com o servidor usando http e obter o token de autenticação
 
+    const sessionToken = "1234";
     await _storage.write(key: 'auth_token', value: sessionToken);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    //prefs.setString("usuario", _username!);
     await prefs.setString('user_username', _username!);
 
     Navigator.push(
@@ -50,10 +52,7 @@ class _LoginState extends State<Login> {
             padding: EdgeInsets.only(left: 40, right: 40, top: 40),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.white,
-                  Colors.indigo.shade50
-                ],
+                colors: [Colors.white, Colors.indigo.shade50],
               ),
             ),
             child: ListView(
@@ -189,11 +188,13 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   String _emailValidationMessage = '';
 
   bool isEmailValid(String email) {
-    String pattern = r'^[a-zA-Z0-9.a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
+    String pattern =
+        r'^[a-zA-Z0-9.a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
     RegExp regex = RegExp(pattern);
     return regex.hasMatch(email);
   }
@@ -238,7 +239,9 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
             Text(
               _emailValidationMessage,
               style: TextStyle(
-                color: isEmailValid(_emailController.text) ? Colors.green : Colors.red,
+                color: isEmailValid(_emailController.text)
+                    ? Colors.green
+                    : Colors.red,
               ),
             ),
             TextFormField(

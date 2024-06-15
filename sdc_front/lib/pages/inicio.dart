@@ -35,16 +35,16 @@ class _InicioState extends State<Inicio> {
   late Marker markerB;
   bool isMarkerVisible = true;
   late GoogleMap gMapWidget;
-  String strOrigem='Origem';
-  String strDestino='Destino';
+  String strOrigem = 'Origem';
+  String strDestino = 'Destino';
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
   @override
-      Widget build(BuildContext context) {
-      updateMarkers();
+  Widget build(BuildContext context) {
+    updateMarkers();
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -113,13 +113,14 @@ class _InicioState extends State<Inicio> {
               ),
               Text('Mapa'),
               Expanded(
-                child: gMapWidget=GoogleMap(
+                child: gMapWidget = GoogleMap(
                   onMapCreated: _onMapCreated,
                   onTap: _onMapTap,
                   initialCameraPosition: CameraPosition(
                     target: _selectedLocation,
-                    zoom: 15, )
-                  ,markers: Set.of([markerA,markerB]),
+                    zoom: 15,
+                  ),
+                  markers: Set.of([markerA, markerB]),
                 ),
               ),
             ],
@@ -164,7 +165,7 @@ class _InicioState extends State<Inicio> {
     // _controller1.clear();
     // _controller2.clear();
     setState(() {});
-    print(strOrigem+strDestino);
+    print(strOrigem + strDestino);
     return;
   }
 
@@ -178,9 +179,8 @@ class _InicioState extends State<Inicio> {
     // OBS: APENAS A LOCALIZACAO DURANTE O USO DO APP FOI REQUERIDA,
     // NÃO SENDO NECESSARIO A LOCALIZACAO EM BACKGROUND
     // _selectedLocation=LatLng(-22.902397827002222, -43.172449059784405);
-    _selectedLocation= await _getLocation();
-    if (_selectedLocation!=null)
-      deLocation=_selectedLocation;
+    _selectedLocation = await _getLocation();
+    if (_selectedLocation != null) deLocation = _selectedLocation;
     print(_selectedLocation);
     refreshMap();
     // return;
@@ -188,51 +188,51 @@ class _InicioState extends State<Inicio> {
 
   void refreshMap() async {
     // isMarkerVisible=!isMarkerVisible;
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: _selectedLocation
-      ,zoom: await mapController.getZoomLevel() )));
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: _selectedLocation, zoom: await mapController.getZoomLevel())));
     setState(() {});
   }
-  void _onMapTap(LatLng l){
+
+  void _onMapTap(LatLng l) {
     print(l);
   }
 
-  void updateMarkers(){
+  void updateMarkers() {
     markerA = Marker(
-          markerId: MarkerId('markerA'),
-          position: deLocation,
-          infoWindow: InfoWindow(title: strOrigem),
-          visible: isMarkerVisible,
-         );
+      markerId: MarkerId('markerA'),
+      position: deLocation,
+      infoWindow: InfoWindow(title: strOrigem),
+      visible: isMarkerVisible,
+    );
 
-        markerB = Marker(
-          markerId: MarkerId('markerB'),
-          position: paraLocation,
-          infoWindow: InfoWindow(title: strDestino),
-          visible: isMarkerVisible,
-        );
+    markerB = Marker(
+      markerId: MarkerId('markerB'),
+      position: paraLocation,
+      infoWindow: InfoWindow(title: strDestino),
+      visible: isMarkerVisible,
+    );
   }
 
-    Future _getLocation() async {
-      Location location = new Location();
-      bool _serviceEnabled;
-      PermissionStatus _permissionGranted;
-     LocationData _locationData;
-      _serviceEnabled = await location.serviceEnabled();
+  Future _getLocation() async {
+    Location location = new Location();
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
-        _serviceEnabled = await location.requestService();
-        if (!_serviceEnabled) {
-          return null;
-        }
+        return null;
       }
-      _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.denied) {
-        _permissionGranted = await location.requestPermission();
-        if (_permissionGranted != PermissionStatus.granted) {
-          return null;
-        }
+    }
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return null;
       }
-      _locationData = await location.getLocation();
-      return LatLng(_locationData.latitude!,_locationData.longitude!);
-      }
-
+    }
+    _locationData = await location.getLocation();
+    return LatLng(_locationData.latitude!, _locationData.longitude!);
+  }
 }
