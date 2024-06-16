@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
 import '../uffcaronalib.dart';
 
@@ -69,6 +69,41 @@ class _InicioState extends State<Inicio> {
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemarks[0];
     return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+  }
+
+  Future<void> _getCurrentLocation() async {
+    loc.Location location = new loc.Location();
+    bool _serviceEnabled;
+    loc.PermissionStatus _permissionGranted;
+    loc.LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == loc.PermissionStatus.denied) {}
+    _permissionGranted = await location.requestPermission();
+    if (_permissionGranted != loc.PermissionStatus.granted) {
+      return;
+    }
+
+    _locationData = await location.getLocation();
+    LatLng currentLatLng =
+        LatLng(_locationData.latitude!, _locationData.longitude!);
+    String address = await _getAddressFromLatLng(currentLatLng);
+
+    setState(() {
+      deLocation = currentLatLng;
+      strOrigem = address;
+      _origemController.text = address;
+      mapController.animateCamera(CameraUpdate.newLatLng(currentLatLng));
+      updateMarkers();
+    });
   }
 
   void updateMarkers() {
@@ -152,9 +187,7 @@ class _InicioState extends State<Inicio> {
                             SizedBox(width: 8),
                             IconButton(
                               icon: Icon(Icons.location_on, color: Colors.red),
-                              onPressed: () {
-                                // Implementar ação de obter localização atual
-                              },
+                              onPressed: _getCurrentLocation,
                             ),
                           ],
                         ),
