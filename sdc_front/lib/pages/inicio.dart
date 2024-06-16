@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
 import '../uffcaronalib.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({Key? key, required this.title}) : super(key: key);
@@ -101,9 +103,44 @@ class _InicioState extends State<Inicio> {
       deLocation = currentLatLng;
       strOrigem = address;
       _origemController.text = address;
-      mapController.animateCamera(CameraUpdate.newLatLng(currentLatLng));
+      mapController.moveCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: currentLatLng, zoom: 15)));
       updateMarkers();
     });
+  }
+
+  Future<void> _updateLocationFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        LatLng newLatLng =
+            LatLng(locations[0].latitude, locations[0].longitude);
+        setState(() {
+          deLocation = newLatLng;
+          strOrigem = address;
+          mapController.moveCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(target: newLatLng, zoom: 15)));
+          updateMarkers();
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _selectPlace(Prediction prediction) async {
+    List<Location> locations =
+        await locationFromAddress(prediction.description!);
+    if (locations.isNotEmpty) {
+      LatLng newLatLng = LatLng(locations[0].latitude, locations[0].longitude);
+      setState(() {
+        deLocation = newLatLng;
+        _origemController.text = prediction.description!;
+        mapController.moveCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(target: newLatLng, zoom: 15)));
+        updateMarkers();
+      });
+    }
   }
 
   void updateMarkers() {
@@ -180,7 +217,7 @@ class _InicioState extends State<Inicio> {
                                       EdgeInsets.symmetric(horizontal: 16),
                                 ),
                                 onChanged: (value) {
-                                  // Atualizar localização atual conforme o usuário digita
+                                  _updateLocationFromAddress(value);
                                 },
                               ),
                             ),
@@ -211,7 +248,7 @@ class _InicioState extends State<Inicio> {
                                       EdgeInsets.symmetric(horizontal: 16),
                                 ),
                                 onChanged: (value) {
-                                  // Atualizar endereço de destino conforme o usuário digita
+                                  _updateLocationFromAddress(value);
                                 },
                               ),
                             ),
@@ -276,8 +313,10 @@ class _InicioState extends State<Inicio> {
     // Cria um pedido de carona !!
     // implementar Observer para que ao criar uma carona, o BD seja atualizado
 
-    strOrigem = ''; // Atualizar com o valor do campo de origem
-    strDestino = ''; // Atualizar com o valor do campo de destino
+    strOrigem =
+        _origemController.text; // Atualizar com o valor do campo de origem
+    strDestino =
+        _destinoController.text; // Atualizar com o valor do campo de destino
     updateMarkers();
     setState(() {});
   }
