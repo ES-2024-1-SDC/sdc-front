@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:geocoding/geocoding.dart';
 import '../uffcaronalib.dart';
 
 class Inicio extends StatefulWidget {
@@ -29,6 +30,10 @@ class _InicioState extends State<Inicio> {
   bool isMarkerVisible = true;
   String strOrigem = 'Origem';
   String strDestino = 'Destino';
+  bool _selectingOrigem = true;
+
+  TextEditingController _origemController = TextEditingController();
+  TextEditingController _destinoController = TextEditingController();
 
   @override
   void initState() {
@@ -38,6 +43,48 @@ class _InicioState extends State<Inicio> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  void _onMapTap(LatLng position) async {
+    String address = await _getAddressFromLatLng(position);
+
+    setState(() {
+      if (_selectingOrigem) {
+        deLocation = position;
+        strOrigem = address;
+        _origemController.text = address;
+        _selectingOrigem = !_selectingOrigem;
+      } else {
+        paraLocation = position;
+        strDestino = address;
+        _destinoController.text = address;
+        _selectingOrigem = !_selectingOrigem;
+      }
+      updateMarkers();
+    });
+  }
+
+  Future<String> _getAddressFromLatLng(LatLng position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark place = placemarks[0];
+    return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+  }
+
+  void updateMarkers() {
+    markerA = Marker(
+      markerId: MarkerId('markerA'),
+      position: deLocation,
+      infoWindow: InfoWindow(title: strOrigem),
+      visible: isMarkerVisible,
+    );
+
+    markerB = Marker(
+      markerId: MarkerId('markerB'),
+      position: paraLocation,
+      infoWindow: InfoWindow(title: strDestino),
+      visible: isMarkerVisible,
+    );
   }
 
   @override
@@ -70,6 +117,7 @@ class _InicioState extends State<Inicio> {
                     target: _selectedLocation,
                     zoom: 15,
                   ),
+                  onTap: _onMapTap,
                   markers: Set.of([markerA, markerB]),
                 ),
                 Positioned(
@@ -87,6 +135,7 @@ class _InicioState extends State<Inicio> {
                           children: [
                             Expanded(
                               child: TextField(
+                                controller: _origemController,
                                 decoration: InputDecoration(
                                   hintText: 'Meu Endereço Atual',
                                   border: OutlineInputBorder(),
@@ -119,6 +168,7 @@ class _InicioState extends State<Inicio> {
                           children: [
                             Expanded(
                               child: TextField(
+                                controller: _destinoController,
                                 decoration: InputDecoration(
                                   hintText: 'Endereço de Destino',
                                   border: OutlineInputBorder(),
@@ -136,7 +186,7 @@ class _InicioState extends State<Inicio> {
                             ElevatedButton(
                               onPressed: () {
                                 // Ação do botão 'Ok'
-                                okButton1();
+                                okButton();
                               },
                               child: Text('Ok'),
                               style: ElevatedButton.styleFrom(
@@ -189,27 +239,13 @@ class _InicioState extends State<Inicio> {
     );
   }
 
-  void okButton1() {
-    // Lógica para processar o clique no botão 'Ok'
+  void okButton() {
+    // Cria um pedido de carona !!
+    // implementar Observer para que ao criar uma carona, o BD seja atualizado
+
     strOrigem = ''; // Atualizar com o valor do campo de origem
     strDestino = ''; // Atualizar com o valor do campo de destino
     updateMarkers();
     setState(() {});
-  }
-
-  void updateMarkers() {
-    markerA = Marker(
-      markerId: MarkerId('markerA'),
-      position: deLocation,
-      infoWindow: InfoWindow(title: strOrigem),
-      visible: isMarkerVisible,
-    );
-
-    markerB = Marker(
-      markerId: MarkerId('markerB'),
-      position: paraLocation,
-      infoWindow: InfoWindow(title: strDestino),
-      visible: isMarkerVisible,
-    );
   }
 }
