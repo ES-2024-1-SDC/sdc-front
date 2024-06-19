@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'inicio.dart';
+import 'package:http/http.dart' as http;
 
 enum LoginStatus { notSignIn, signIn }
 
@@ -20,26 +25,47 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   LoginStatus _loginStatus = LoginStatus.notSignIn;
   String? _username, _password;
-  late String sessionToken;
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+
   late int userId;
+  final urlApi = 'esd2_api.serveo.net';
 
   final _storage = FlutterSecureStorage();
 
   Future _login() async {
     // Lógica da autenticação com o servidor usando http e obter o token de autenticação
 
-    const sessionToken = "1234";
-    await _storage.write(key: 'auth_token', value: sessionToken);
+    var url = Uri.http(urlApi, '/auth/login');
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_username', _username!);
+    var bd = {'email': _username, 'password': _password};
+    print(_username);
+    print(_password);
+    print(bd);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => Inicio(title: 'Caronas Uff'),
-      ),
-    );
+    var response = await http.post(url, body: bd);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+
+      String sessionToken = decodedBody['token'];
+      print('Token: ${sessionToken}');
+
+      await _storage.write(key: 'auth_token', value: sessionToken);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_username', _username!);
+      _loginStatus = LoginStatus.signIn;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+          builder: (context) => Inicio(title: 'Caronas Uff'),
+        ),
+      );
+    }
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -105,7 +131,10 @@ class _LoginState extends State<Login> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _submit,
-                          child: Text("Login", style: TextStyle(color: Colors.white),),
+                          child: Text(
+                            "Login",
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.indigo.shade400,
                             shape: RoundedRectangleBorder(
@@ -145,7 +174,9 @@ class _LoginState extends State<Login> {
           ),
         );
       case LoginStatus.signIn:
-        return Login();
+        return Inicio(
+          title: 'Caronas UFF',
+        );
     }
   }
 
