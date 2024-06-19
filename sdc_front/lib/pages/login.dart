@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'inicio.dart';
@@ -50,7 +49,7 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       var decodedBody = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
 
-      String sessionToken = decodedBody['token'];
+      String sessionToken = decodedBody['token']['token'];
       print('Token: ${sessionToken}');
 
       await _storage.write(key: 'auth_token', value: sessionToken);
@@ -201,6 +200,20 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       TextEditingController();
   String _emailValidationMessage = '';
 
+  final urlApi = 'esd2_api.serveo.net';
+
+  Future<int> register() async {
+    var url = Uri.http(urlApi, '/auth/register');
+    var body = {
+      'email': _emailController.text,
+      'password': _passwordController.text,
+      'full_name': _usernameController.text
+    };
+
+    http.Response response = await http.post(url, body: body);
+    return response.statusCode;
+  }
+
   bool isEmailValid(String email) {
     String pattern =
         r'^[a-zA-Z0-9.a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
@@ -285,7 +298,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
         ),
         ElevatedButton(
           child: Text('Register'),
-          onPressed: () {
+          onPressed: () async {
             String email = _emailController.text;
             String username = _usernameController.text;
             String password = _passwordController.text;
@@ -297,6 +310,8 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
               print('Username: $username');
               print('Password: $password');
 
+              int resp = await register();
+              print(resp);
               Navigator.of(context).pop();
             } else {
               // Mostrar erro de confirmação de senha
