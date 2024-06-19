@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'uffcaronalib.dart';
 
 void main() {
+  debugPrint = (String? message, {int? wrapWidth}) {};
   runApp(const CaronaUff());
 }
 

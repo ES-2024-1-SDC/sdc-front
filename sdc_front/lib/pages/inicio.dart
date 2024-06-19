@@ -17,7 +17,9 @@ class Inicio extends StatefulWidget {
 class _InicioState extends State<Inicio> {
   int _selectedPage = 0;
   List<Widget> _listaPaginas = <Widget>[
-    Splash(),
+    Inicio(
+      title: 'Carona UFF',
+    ),
     PedirCarona(),
     OfereceCarona(),
     Historico()

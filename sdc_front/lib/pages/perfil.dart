@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdc_front/pages/cadastrar_veiculo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Perfil extends StatelessWidget {
@@ -74,6 +75,16 @@ class Perfil extends StatelessWidget {
                       ),
                     ],
                   ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VehicleRegistrationPage()),
+                        );
+                      },
+                      child: Text('Cadastrar veículo'))
                 ],
               ),
             );

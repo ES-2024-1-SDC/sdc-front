@@ -28,14 +28,15 @@ class _LoginState extends State<Login> {
   TextEditingController _passwordController = new TextEditingController();
 
   late int userId;
-  final urlApi = 'esd2_api.serveo.net';
+  final urlApi = 'f31a-45-65-156-212.ngrok-free.app';
 
   final _storage = FlutterSecureStorage();
 
   Future _login() async {
     // Lógica da autenticação com o servidor usando http e obter o token de autenticação
+    print(urlApi);
 
-    var url = Uri.http(urlApi, '/auth/login');
+    var url = Uri.https(urlApi, '/auth/login');
 
     var bd = {'email': _username, 'password': _password};
     print(_username);
@@ -50,12 +51,19 @@ class _LoginState extends State<Login> {
       var decodedBody = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
 
       String sessionToken = decodedBody['token']['token'];
+      int id = decodedBody["userId"];
       print('Token: ${sessionToken}');
+      print('Token: ${id}');
 
       await _storage.write(key: 'auth_token', value: sessionToken);
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_username', _username!);
+      await prefs.setInt('userId', id);
+
+      //Setar id, username real (e não email)
+      //id vai ser importante para fazer as buscas
+
       _loginStatus = LoginStatus.signIn;
 
       Navigator.push(
@@ -200,10 +208,10 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       TextEditingController();
   String _emailValidationMessage = '';
 
-  final urlApi = 'esd2_api.serveo.net';
+  final urlApi = 'f31a-45-65-156-212.ngrok-free.app';
 
   Future<int> register() async {
-    var url = Uri.http(urlApi, '/auth/register');
+    var url = Uri.https(urlApi, '/auth/register');
     var body = {
       'email': _emailController.text,
       'password': _passwordController.text,
@@ -242,6 +250,15 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
         _emailValidationMessage = 'Email inválido';
       }
     });
+  }
+
+  void _showSnackBar(BuildContext context) {
+    final snackBar = SnackBar(
+      content: Text("Usuário registrado com sucesso."),
+      duration: Duration(seconds: 2),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -311,6 +328,9 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
               print('Password: $password');
 
               int resp = await register();
+              if (resp == 200) {
+                _showSnackBar(context);
+              }
               print(resp);
               Navigator.of(context).pop();
             } else {
