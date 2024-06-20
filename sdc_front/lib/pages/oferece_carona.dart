@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -104,23 +105,29 @@ class _OfereceCaronaState extends State<OfereceCarona> {
         hora: _horaController.text,
       );
 
+      var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
+      var inputDate =
+          inputFormat.parse("${_dataController.text} ${_horaController.text}");
+
+      var outPutFormat = DateFormat('yyyy-MM-ddTHH:mm');
+      var outPutDate = outPutFormat.format(inputDate);
+
       var caronaObj = {
         'driverId': userId.toString(),
         'veichleId': _selectedVeiculoId.toString(),
-        'dateTime': '${_dataController.text} ${_horaController.text}',
+        'dateTime': outPutDate,
         'originLat': '0.0',
         'originLng': '0.0',
         'origin': _origemController.text,
         'destinationLat': '0.0',
         'destinationLng': '0.0',
         'destination': _destinoController.text,
-        'maxPassenger': '4',
+        'maxPassengers': '4',
         'automaticAllowance': '0',
       };
 
       print(caronaObj);
       print(token);
-      sleep(Duration(seconds: 2));
       var url = Uri.parse('https://f31a-45-65-156-212.ngrok-free.app/rides');
 
       http.Response response = await http.post(
@@ -219,7 +226,7 @@ class _OfereceCaronaState extends State<OfereceCarona> {
                     TextFormField(
                       controller: _dataController,
                       decoration:
-                          InputDecoration(labelText: 'Data (dd/mm/aaaa)'),
+                          InputDecoration(labelText: 'Data (dd/MM/aaaa)'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor, insira a data';

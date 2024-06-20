@@ -23,9 +23,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   LoginStatus _loginStatus = LoginStatus.notSignIn;
-  String? _username, _password;
-  TextEditingController _emailController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
+  String? _email, _password;
 
   late int userId;
   final urlApi = 'f31a-45-65-156-212.ngrok-free.app';
@@ -38,8 +36,8 @@ class _LoginState extends State<Login> {
 
     var url = Uri.https(urlApi, '/auth/login');
 
-    var bd = {'email': _username, 'password': _password};
-    print(_username);
+    var bd = {'email': _email, 'password': _password};
+    print(_email);
     print(_password);
     print(bd);
 
@@ -58,7 +56,7 @@ class _LoginState extends State<Login> {
       await _storage.write(key: 'auth_token', value: sessionToken);
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_username', _username!);
+      await prefs.setString('user_username', _email!);
       await prefs.setInt('userId', id);
 
       //Setar id, username real (e não email)
@@ -103,7 +101,7 @@ class _LoginState extends State<Login> {
                   child: Column(
                     children: [
                       TextFormField(
-                        onSaved: (newValue) => _username = newValue,
+                        onSaved: (newValue) => _email = newValue,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, insira um nome de usuário.';
@@ -112,7 +110,7 @@ class _LoginState extends State<Login> {
                         },
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.account_circle_outlined),
-                          labelText: "Username",
+                          labelText: "Email",
                           border: OutlineInputBorder(),
                         ),
                       ),

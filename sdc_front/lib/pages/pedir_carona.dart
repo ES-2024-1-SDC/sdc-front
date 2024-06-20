@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import '../uffcaronalib.dart';
+import '../constants.dart' as Constants;
 
 class PedirCarona extends StatefulWidget {
   const PedirCarona({Key? key}) : super(key: key);
@@ -31,22 +31,37 @@ class _PedirCaronaState extends State<PedirCarona> {
   }
 
   Future<void> _participarCarona(int caronaId) async {
-    final url = Uri.parse(
-        'https://f31a-45-65-156-212.ngrok-free.app/rides/$caronaId/join');
-
     final storage = FlutterSecureStorage();
     var token = await storage.read(key: 'auth_token');
-    final response = await http.post(
-      url,
+    final url_aux = Uri.parse("${Constants.url}rides");
+
+    final response_aux = await http.get(
+      url_aux,
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer ${token!}',
       },
     );
+    var obj = jsonDecode(response_aux.body);
+    var data = obj['data'];
+
+    print(data[caronaId - 1]);
+    int passageiros =
+        int.parse(data[caronaId - 1]['maxPassengers'].toString()) - 1;
+    print(passageiros);
+
+    final url = Uri.parse("${Constants.url}rides/$caronaId");
+
+    final response = await http.put(url, headers: {
+      HttpHeaders.authorizationHeader: 'Bearer ${token}',
+    }, body: {
+      'maxPassengers': passageiros.toString()
+    });
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Você participou da carona com sucesso!'),
       ));
+      setState(() {});
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Falha ao participar da carona.'),
@@ -71,17 +86,22 @@ class _PedirCaronaState extends State<PedirCarona> {
             return Center(child: Text('Nenhuma carona disponível'));
           } else {
             var caronas = snapshot.data as List;
+            print(caronas[4]);
             return ListView.builder(
               itemCount: caronas.length,
               itemBuilder: (context, index) {
                 var carona = caronas[index];
                 var dateTime = carona['dateTime'].toString();
-                dateTime = dateTime.replaceAll('Z', '');
-                dateTime = dateTime.replaceAll('T', ' ');
+                var inputFormat = DateFormat('yyyy-MM-ddTHH:mm');
+                var inputDate = inputFormat.parse(dateTime);
+
+                var outPutFormat = DateFormat('dd/MM/yyyy HH:mm');
+                var outPutDate = outPutFormat.format(inputDate);
+
                 return ListTile(
                   title: Text('Carona ${carona['id']}'),
                   subtitle: Text(
-                      'De: ${carona['origin']}\nPara: ${carona['destination']}\nHorário: ${dateTime}'),
+                      'De: ${carona['origin']}\nPara: ${carona['destination']}\nHorário: ${outPutDate}\nVagas: ${carona['maxPassengers']}'),
                   trailing: ElevatedButton(
                     onPressed: () {
                       _participarCarona(carona['id']);

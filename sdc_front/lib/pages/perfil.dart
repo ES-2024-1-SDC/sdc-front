@@ -1,17 +1,50 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sdc_front/pages/cadastrar_veiculo.dart';
+import 'package:sdc_front/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'veiculos_registrados.dart';
+import 'package:http/http.dart' as http;
+import '../constants.dart' as Constants;
 
 class Perfil extends StatelessWidget {
   Perfil({super.key});
 
   Future<Map<String, dynamic>> _getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userName = prefs.getString('user_username') ?? '';
+    int? userId = prefs.getInt("userId");
+    var url = Uri.parse("${Constants.url}users/${userId}");
+    final storage = FlutterSecureStorage();
+    var token = await storage.read(key: 'auth_token');
+
+    http.Response response = await http.get(headers: {
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+    }, url);
+
+    var obj = jsonDecode(response.body);
+    print(obj);
+
+    String userName = obj['fullName'];
+    String email = obj['email'];
     double avaliacoes =
         4.9; // Substitua por sua lógica para obter as avaliações
-    return {'userName': userName, 'avaliacoes': avaliacoes};
+    return {'userName': userName, 'email': email, 'avaliacoes': avaliacoes};
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    final storage = FlutterSecureStorage();
+    await storage.delete(key: 'auth_token');
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+    );
   }
 
   @override
@@ -33,6 +66,7 @@ class Perfil extends StatelessWidget {
             return Center(child: Text('Nenhum dado encontrado'));
           } else {
             final userName = snapshot.data!['userName'] as String;
+            final email = snapshot.data!['email'] as String;
             final avaliacoes = snapshot.data!['avaliacoes'] as double;
             return Container(
               alignment: Alignment.center,
@@ -51,6 +85,25 @@ class Perfil extends StatelessWidget {
                       ),
                       Text(
                         userName,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Email: ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        email,
                         style: TextStyle(
                           fontSize: 18,
                         ),
@@ -89,14 +142,23 @@ class Perfil extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisteredVehiclesPage()),
-                        );
-                      },
-                      child: Text('Veículos'))
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RegisteredVehiclesPage()),
+                      );
+                    },
+                    child: Text('Veículos'),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _logout(context),
+                    child: Text('Logout'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // Cor do botão de logout
+                    ),
+                  ),
                 ],
               ),
             );
