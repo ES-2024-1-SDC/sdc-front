@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import '../uffcaronalib.dart';
 
 class PedirCarona extends StatefulWidget {
@@ -9,68 +14,82 @@ class PedirCarona extends StatefulWidget {
 }
 
 class _PedirCaronaState extends State<PedirCarona> {
-  TextEditingController _origemController = TextEditingController();
-  TextEditingController _destinoController = TextEditingController();
-  TextEditingController _dataController = TextEditingController();
-  TextEditingController _horaController = TextEditingController();
+  Future _getCaronas() async {
+    final url = Uri.parse('https://f31a-45-65-156-212.ngrok-free.app/rides');
+
+    final storage = FlutterSecureStorage();
+    var token = await storage.read(key: 'auth_token');
+    http.Response response = await http.get(headers: {
+      HttpHeaders.authorizationHeader: 'Bearer ${token!}',
+    }, url);
+
+    var body = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+    print(body);
+    var data = body['data'];
+    print(data);
+    return data;
+  }
+
+  Future<void> _participarCarona(int caronaId) async {
+    final url = Uri.parse(
+        'https://f31a-45-65-156-212.ngrok-free.app/rides/$caronaId/join');
+
+    final storage = FlutterSecureStorage();
+    var token = await storage.read(key: 'auth_token');
+    final response = await http.post(
+      url,
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${token!}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Você participou da carona com sucesso!'),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Falha ao participar da carona.'),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pedir carona'),
-        backgroundColor: Colors.indigo, // Cor de fundo da AppBar similar à Uber
+        title: Text('Pedir Carona'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextFormField(
-              controller: _origemController,
-              decoration: InputDecoration(
-                labelText: 'Origem',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _destinoController,
-              decoration: InputDecoration(
-                labelText: 'Destino',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _dataController,
-              decoration: InputDecoration(
-                labelText: 'Data',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _horaController,
-              decoration: InputDecoration(
-                labelText: 'Hora',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Lógica para salvar os dados
+      body: FutureBuilder(
+        future: _getCaronas(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erro ao carregar as caronas'));
+          } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+            return Center(child: Text('Nenhuma carona disponível'));
+          } else {
+            var caronas = snapshot.data as List;
+            return ListView.builder(
+              itemCount: caronas.length,
+              itemBuilder: (context, index) {
+                var carona = caronas[index];
+                return ListTile(
+                  title: Text('Carona ${carona['id']}'),
+                  subtitle: Text('Detalhes da carona'),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      _participarCarona(carona['id']);
+                    },
+                    child: Text('Participar'),
+                  ),
+                );
               },
-              child: Text('Pedir carona', style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo, // Cor do botão similar à Uber
-              ),
-            ),
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }
 }
-

@@ -314,6 +314,7 @@ class _InicioState extends State<Inicio> {
 
   void okButton() {
     // Cria um pedido de carona !!
+    // Aqui é como se fosse um pedido ao vivo
     // implementar Observer para que ao criar uma carona, o BD seja atualizado
 
     strOrigem =

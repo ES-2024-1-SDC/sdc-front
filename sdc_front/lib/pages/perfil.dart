@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sdc_front/pages/cadastrar_veiculo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'veiculos_registrados.dart';
 
 class Perfil extends StatelessWidget {
   Perfil({super.key});
@@ -77,14 +78,25 @@ class Perfil extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VehicleRegistrationPage()),
+                      );
+                    },
+                    child: Text('Cadastrar veículo'),
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => VehicleRegistrationPage()),
+                              builder: (context) => RegisteredVehiclesPage()),
                         );
                       },
-                      child: Text('Cadastrar veículo'))
+                      child: Text('Veículos'))
                 ],
               ),
             );
