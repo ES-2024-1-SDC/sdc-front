@@ -24,9 +24,9 @@ class _PedirCaronaState extends State<PedirCarona> {
     }, url);
 
     var body = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    print(body);
     var data = body['data'];
     print(data);
+
     return data;
   }
 
@@ -75,9 +75,13 @@ class _PedirCaronaState extends State<PedirCarona> {
               itemCount: caronas.length,
               itemBuilder: (context, index) {
                 var carona = caronas[index];
+                var dateTime = carona['dateTime'].toString();
+                dateTime = dateTime.replaceAll('Z', '');
+                dateTime = dateTime.replaceAll('T', ' ');
                 return ListTile(
                   title: Text('Carona ${carona['id']}'),
-                  subtitle: Text('Detalhes da carona'),
+                  subtitle: Text(
+                      'De: ${carona['origin']}\nPara: ${carona['destination']}\nHorário: ${dateTime}'),
                   trailing: ElevatedButton(
                     onPressed: () {
                       _participarCarona(carona['id']);
