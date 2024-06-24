@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import "package:flutter/material.dart";
+// import 'package:google_maps/google_maps_drawing.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../uffcaronalib.dart';
+import 'package:location/location.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key, required this.title});
@@ -22,19 +25,26 @@ class _InicioState extends State<Inicio> {
 
   String textLabel1 = 'De: ';
   String textLabel2 = 'Para: ';
-  String textInputDe = '';
-  String textInputPara = '';
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   late GoogleMapController mapController;
-  final LatLng _selectedLocation = const LatLng(-22.904585778723078, -43.13149503863926);
+  LatLng _selectedLocation = LatLng(-22.904585778723078, -43.13149503863926);
+  LatLng deLocation = LatLng(-22.902397827002222, -43.172449059784405);
+  LatLng paraLocation = LatLng(-22.904585778723078, -43.13149503863926);
+  late Marker markerA;
+  late Marker markerB;
+  bool isMarkerVisible = true;
+  late GoogleMap gMapWidget;
+  String strOrigem='Origem';
+  String strDestino='Destino';
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
   @override
-  Widget build(BuildContext context) {
+      Widget build(BuildContext context) {
+      updateMarkers();
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -103,12 +113,13 @@ class _InicioState extends State<Inicio> {
               ),
               Text('Mapa'),
               Expanded(
-                child: GoogleMap(
+                child: gMapWidget=GoogleMap(
                   onMapCreated: _onMapCreated,
+                  onTap: _onMapTap,
                   initialCameraPosition: CameraPosition(
                     target: _selectedLocation,
-                    zoom: 15,
-                  ),
+                    zoom: 15, )
+                  ,markers: Set.of([markerA,markerB]),
                 ),
               ),
             ],
@@ -146,16 +157,82 @@ class _InicioState extends State<Inicio> {
   }
 
   void okButton1() {
-    textInputDe = _controller1.text;
-    textInputPara = _controller2.text;
-    _controller1.clear();
-    _controller2.clear();
+    strOrigem = _controller1.text;
+    strDestino = _controller2.text;
+    print(strOrigem);
+    updateMarkers();
+    // _controller1.clear();
+    // _controller2.clear();
     setState(() {});
-    print(textInputDe + textInputPara);
+    print(strOrigem+strDestino);
     return;
   }
 
-  void gpsButton1() {
-    return;
+  void gpsButton1() async {
+    // 060524 - TODO SELECTEDLOCATION DEVE RECEBER A LOCALIZAÇÃO ATUAL DO USUARIO
+    // PROVAVELMENTE SERA NECESSARIO MUDANCAS NO PERMISSIOHANDLER PARA CONSEGUIR
+    // PERMISSOES DE LOCALIZACAO ATUAL QUE TAMBEM DEVEM SER ADICIONADAS NO INICIO
+    // DO CREATESTATE
+    // 070524 - FEITO. O APP CONSEGUE MUDAR A LOCALIZACAO ATUAL DO USUARIO
+    // ATRAVES DO BOTAO GPSBUTTON1
+    // OBS: APENAS A LOCALIZACAO DURANTE O USO DO APP FOI REQUERIDA,
+    // NÃO SENDO NECESSARIO A LOCALIZACAO EM BACKGROUND
+    // _selectedLocation=LatLng(-22.902397827002222, -43.172449059784405);
+    _selectedLocation= await _getLocation();
+    if (_selectedLocation!=null)
+      deLocation=_selectedLocation;
+    print(_selectedLocation);
+    refreshMap();
+    // return;
   }
+
+  void refreshMap() async {
+    // isMarkerVisible=!isMarkerVisible;
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: _selectedLocation
+      ,zoom: await mapController.getZoomLevel() )));
+    setState(() {});
+  }
+  void _onMapTap(LatLng l){
+    print(l);
+  }
+
+  void updateMarkers(){
+    markerA = Marker(
+          markerId: MarkerId('markerA'),
+          position: deLocation,
+          infoWindow: InfoWindow(title: strOrigem),
+          visible: isMarkerVisible,
+         );
+
+        markerB = Marker(
+          markerId: MarkerId('markerB'),
+          position: paraLocation,
+          infoWindow: InfoWindow(title: strDestino),
+          visible: isMarkerVisible,
+        );
+  }
+
+    Future _getLocation() async {
+      Location location = new Location();
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+     LocationData _locationData;
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return null;
+        }
+      }
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return null;
+        }
+      }
+      _locationData = await location.getLocation();
+      return LatLng(_locationData.latitude!,_locationData.longitude!);
+      }
+
 }

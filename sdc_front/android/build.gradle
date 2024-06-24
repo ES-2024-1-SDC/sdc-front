@@ -1,3 +1,11 @@
+buildscript{
+    ext.kotlin_version='<latest-version>'
+    repositories{
+        google()
+        mavenCentral()
+    }
+}
+
 allprojects {
     repositories {
         google()
