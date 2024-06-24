@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'uffcaronalib.dart';
 
 void main() {
+  debugPrint = (String? message, {int? wrapWidth}) {};
   runApp(const CaronaUff());
 }
 
@@ -12,6 +13,7 @@ class CaronaUff extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Carona Uff',
       theme: ThemeData(
         colorScheme:
